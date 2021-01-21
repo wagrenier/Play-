@@ -66,5 +66,6 @@ namespace Iop
 		void CheckPendingInterrupts();
 
 		int m_dmaUpdateTicks;
+		int m_spuIrqUpdateTicks;
 	};
 }

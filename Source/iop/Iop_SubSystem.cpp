@@ -299,6 +299,7 @@ bool CSubSystem::IsCpuIdle()
 void CSubSystem::CountTicks(int ticks)
 {
 	static const int g_dmaUpdateDelay = 10000;
+	static const int g_spuIrqCheckDelay = 1000;
 	m_counters.Update(ticks);
 	m_bios->CountTicks(ticks);
 	m_dmaUpdateTicks += ticks;
@@ -308,6 +309,8 @@ void CSubSystem::CountTicks(int ticks)
 		m_dmac.ResumeDma(8);
 		m_dmaUpdateTicks -= g_dmaUpdateDelay;
 	}
+	m_spuIrqUpdateTicks += ticks;
+	if(m_spuIrqUpdateTicks >= g_spuIrqCheckDelay)
 	{
 		bool irqPending = false;
 		irqPending |= m_spuCore0.GetIrqPending();
@@ -320,6 +323,7 @@ void CSubSystem::CountTicks(int ticks)
 		{
 			m_intc.ClearLine(CIntc::LINE_SPU2);
 		}
+		m_spuIrqUpdateTicks -= g_spuIrqCheckDelay;
 	}
 }
 
